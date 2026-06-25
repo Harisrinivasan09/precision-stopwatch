@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Precision Stopwatch</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="stopwatch.css" />
+</head>
+
+<body>
+<div class="app" role="main">
+  <header>
+    <span class="brand">Precision Stopwatch</span>
+    <div class="status-dot" id="statusDot" aria-hidden="true"></div>
+  </header>
+  <div class="timer-card" id="timerCard">
+    <div class="dial-wrap" role="timer" aria-live="polite" aria-label="Elapsed time">
+      <svg class="dial-svg" viewBox="0 0 240 240" aria-hidden="true">
+        <g class="dial-tick-marks" id="tickMarks"></g>
+        <circle class="dial-track"    cx="120" cy="120" r="104" />
+        <circle class="dial-progress" id="dialProgress" cx="120" cy="120" r="104" />
+      </svg>
+
+      <div class="timer-display">
+        <div class="time-main" id="timeMain">00:00</div>
+        <div class="time-ms"   id="timeMs">.00</div>
+      </div>
+    </div>
+
+    <div class="session-row" aria-label="Session statistics">
+      <div class="session-stat">
+        <span class="session-label">Laps</span>
+        <span class="session-value" id="statLaps">0</span>
+      </div>
+      <div class="session-stat">
+        <span class="session-label">Best lap</span>
+        <span class="session-value best" id="statBest">—</span>
+      </div>
+      <div class="session-stat">
+        <span class="session-label">Avg lap</span>
+        <span class="session-value" id="statAvg">—</span>
+      </div>
+    </div>
+
+    <div class="controls" role="group" aria-label="Stopwatch controls">
+
+      <button class="btn btn-start" id="btnStart" aria-label="Start stopwatch">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true">
+          <polygon points="2,1 13,7 2,13"/>
+        </svg>
+        Start
+      </button>
+
+      <button class="btn btn-lap" id="btnLap" disabled aria-label="Record lap">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+          <circle cx="7" cy="7" r="5.5"/>
+          <polyline points="7,4 7,7 9,9"/>
+        </svg>
+        Lap
+      </button>
+
+      <button class="btn btn-reset" id="btnReset" disabled aria-label="Reset stopwatch">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M2 7a5 5 0 1 0 1.2-3.2"/>
+          <polyline points="2,2 2,5 5,5"/>
+        </svg>
+        Reset
+      </button>
+
+    </div>
+  </div>
+
+  <section class="lap-panel" aria-label="Lap history" id="lapPanel">
+    <div class="lap-panel-header">
+      <span class="lap-panel-title">Lap history</span>
+      <span class="lap-count-badge" id="lapCountBadge">0</span>
+    </div>
+    <ul class="lap-list" id="lapList" aria-label="Recorded laps">
+      <li class="lap-empty" id="lapEmpty">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <circle cx="16" cy="16" r="12"/>
+          <polyline points="16,10 16,16 20,20"/>
+        </svg>
+        No laps recorded yet
+      </li>
+    </ul>
+  </section>
+
+</div>
+
+<script src="stopwatch.js"></script>
+</body>
+</html>

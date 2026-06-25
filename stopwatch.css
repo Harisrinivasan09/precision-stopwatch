@@ -1,0 +1,470 @@
+/* ══════════════════════════════════════════════════════════════════
+   PRECISION STOPWATCH — styles.css
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── Reset & Base ─────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:           #0A0E1A;
+  --surface:      #131929;
+  --surface-2:    #1B2438;
+  --border:       #243048;
+  --text:         #F0F4FF;
+  --text-muted:   #6B7FA3;
+  --text-dim:     #3D5070;
+  --accent:       #00D4FF;
+  --accent-glow:  rgba(0, 212, 255, 0.18);
+  --accent-dim:   rgba(0, 212, 255, 0.08);
+  --best:         #FFB800;
+  --best-glow:    rgba(255, 184, 0, 0.15);
+  --danger:       #FF4D6A;
+  --radius-sm:    8px;
+  --radius:       16px;
+  --radius-lg:    24px;
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-ui:      'Inter', sans-serif;
+  --transition:   200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-ui);
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 24px 16px 48px;
+  overflow-x: hidden;
+}
+
+/* ── Background texture ───────────────────────────────────────────── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(0,212,255,0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 80% 90%, rgba(0,100,180,0.06) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── App shell ────────────────────────────────────────────────────── */
+.app {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ── Header ───────────────────────────────────────────────────────── */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+}
+
+.brand {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-dim);
+  transition: background var(--transition), box-shadow var(--transition);
+}
+
+.status-dot.running {
+  background: var(--accent);
+  box-shadow: 0 0 10px var(--accent);
+}
+
+/* ── Timer card ───────────────────────────────────────────────────── */
+.timer-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 40px 32px 36px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  position: relative;
+  overflow: hidden;
+}
+
+.timer-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: 0;
+  transition: opacity 600ms ease;
+}
+
+.timer-card.running::before { opacity: 1; }
+
+/* ── Arc dial ─────────────────────────────────────────────────────── */
+.dial-wrap {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  flex-shrink: 0;
+}
+
+.dial-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.dial-track {
+  fill: none;
+  stroke: var(--border);
+  stroke-width: 3;
+}
+
+.dial-progress {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 3;
+  stroke-linecap: round;
+  /* circumference of r=104 circle ≈ 653.45 */
+  stroke-dasharray: 653.45;
+  stroke-dashoffset: 653.45;
+  transition: stroke var(--transition);
+  filter: drop-shadow(0 0 6px var(--accent));
+}
+
+.dial-tick-marks {
+  fill: none;
+  stroke: var(--text-dim);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+
+/* Timer digits centred inside dial */
+.timer-display {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.time-main {
+  font-family: var(--font-display);
+  font-size: clamp(42px, 9vw, 52px);
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+  line-height: 1;
+  transition: color var(--transition);
+}
+
+.time-ms {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
+
+/* ── Session info row ─────────────────────────────────────────────── */
+.session-row {
+  display: flex;
+  gap: 24px;
+  width: 100%;
+  justify-content: center;
+}
+
+.session-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.session-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.session-value {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+}
+
+.session-value.best { color: var(--best); }
+
+/* ── Controls ─────────────────────────────────────────────────────── */
+.controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  width: 100%;
+}
+
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 14px 10px;
+  transition:
+    background var(--transition),
+    box-shadow var(--transition),
+    transform var(--transition),
+    opacity var(--transition),
+    color var(--transition);
+  outline: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.btn:active:not(:disabled) { transform: scale(0.95); }
+.btn:disabled { opacity: 0.28; cursor: not-allowed; transform: none; }
+
+/* Start / Resume */
+.btn-start {
+  background: var(--accent);
+  color: #000;
+  box-shadow: 0 0 0 rgba(0,212,255,0);
+}
+.btn-start:not(:disabled):hover {
+  background: #33DDFF;
+  box-shadow: 0 4px 24px rgba(0,212,255,0.35);
+}
+
+/* Pause */
+.btn-pause {
+  background: var(--surface-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+.btn-pause:not(:disabled):hover {
+  background: var(--border);
+  border-color: var(--text-dim);
+}
+
+/* Lap */
+.btn-lap {
+  background: var(--accent-dim);
+  color: var(--accent);
+  border: 1px solid rgba(0,212,255,0.2);
+}
+.btn-lap:not(:disabled):hover {
+  background: var(--accent-glow);
+  border-color: rgba(0,212,255,0.4);
+}
+
+/* Reset */
+.btn-reset {
+  background: var(--surface-2);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+.btn-reset:not(:disabled):hover {
+  background: rgba(255,77,106,0.1);
+  color: var(--danger);
+  border-color: rgba(255,77,106,0.3);
+}
+
+/* ── Lap list panel ───────────────────────────────────────────────── */
+.lap-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.lap-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.lap-panel-title {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.lap-count-badge {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 2px 10px;
+  min-width: 28px;
+  text-align: center;
+}
+
+.lap-list {
+  list-style: none;
+  overflow-y: auto;
+  max-height: 280px;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.lap-list::-webkit-scrollbar { width: 4px; }
+.lap-list::-webkit-scrollbar-track { background: transparent; }
+.lap-list::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 2px;
+}
+
+.lap-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 36px 20px;
+  color: var(--text-dim);
+  font-size: 13px;
+}
+
+.lap-empty svg { opacity: 0.4; }
+
+.lap-item {
+  display: grid;
+  grid-template-columns: 44px 1fr 1fr;
+  align-items: center;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border);
+  gap: 8px;
+  animation: lap-in 300ms cubic-bezier(0.4, 0, 0.2, 1) both;
+  transition: background var(--transition);
+}
+
+.lap-item:last-child { border-bottom: none; }
+.lap-item:hover { background: var(--surface-2); }
+
+@keyframes lap-in {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.lap-item.best-lap {
+  background: var(--best-glow);
+}
+.lap-item.best-lap:hover { background: rgba(255,184,0,0.2); }
+
+.lap-num {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-dim);
+}
+
+.lap-item.best-lap .lap-num { color: var(--best); }
+
+.lap-time-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.lap-time-label {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.lap-time-val {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+
+.lap-item.best-lap .lap-time-val { color: var(--best); }
+
+.lap-split-val {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+}
+
+/* ── Reduced motion ───────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+  .dial-progress { transition: none; }
+}
+
+/* ── Responsive ───────────────────────────────────────────────────── */
+@media (max-width: 400px) {
+  .timer-card { padding: 28px 20px 24px; }
+  .dial-wrap { width: 180px; height: 180px; }
+  .time-main { font-size: 38px; }
+  .time-ms   { font-size: 18px; }
+  .controls  { grid-template-columns: 1fr 1fr; }
+  .btn-start { grid-column: 1 / -1; }
+}
+
+@media (min-width: 640px) {
+  body { padding-top: 48px; }
+}
